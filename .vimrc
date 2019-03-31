@@ -9,6 +9,7 @@ endif
 
 " =============== General Config =================
 
+set nocursorline
 set number relativenumber	"Line numbers are good
 set backspace=indent,eol,start  "Allow backspace in insert mode
 set history=1000		"Store lots of :cmfline history
@@ -17,6 +18,8 @@ set showmode			"Show current mode down the bottom
 set gcr=a:blink0		"Disable cursor blink
 set visualbell			"No sounds
 set autoread			"Reload files changed outside vim
+set noshowmode    "No need in that now with lightline plugin
+set modifiable
 
 " This makes VIM act like a normal editor, buffers can
 " exist in the background without being in a window
@@ -29,6 +32,16 @@ set hidden
 " the plugins.
 let mapleader=","
 set timeout timeoutlen=1500
+
+" ============== Copy and Paste to clipboard ====
+
+noremap <Leader>y "*y
+noremap <Leader>p "*p
+noremap <Leader>Y "+y
+noremap <Leader>P "+p
+
+" ============== Get Syntax Highlight Group =====
+nnoremap <F10> :HLT
 
 " ============== Turn Off Swap Files ============
 
@@ -80,7 +93,9 @@ set list listchars=tab:\ \ ,trail:·
 set linebreak    "Wrap lines at convenient points
 
 " =============== Term Settings ===================
-set term=xterm-256color
+if !has('nvim')
+        set term=xterm-256color
+endif
 filetype plugin indent on
 syntax on
 
@@ -107,6 +122,11 @@ nnoremap <Leader>n :NERDTreeToggle<CR>
 
 nnoremap <C-p> :Files<Cr>
 
+" Set max line length
+
+highlight ColorColumn ctermbg=grey
+set colorcolumn=100
+
 " ======================= Vim Plug Start =================
 call plug#begin()
 Plug 'tpope/vim-fugitive'
@@ -125,6 +145,35 @@ Plug 'posva/vim-vue'
 Plug 'vim-scripts/vim-coffee-script'
 Plug 'pangloss/vim-javascript'
 Plug 'Townk/vim-autoclose'
+Plug 'milkypostman/vim-togglelist'
+Plug 'itchyny/lightline.vim'
+
+" ================== Git Gutter ======================
+Plug 'airblade/vim-gitgutter'
+" ]c <Plug>GitGutterNextHunk
+" [c <Plug>GitGutterPrevHunk
+" <Leader>hs <Plug>GitGutterStageHunk
+" <Leader>hu <Plug>GitGutterUndoHunk
+
+"============= Multiple Cursors ======================
+Plug 'terryma/vim-multiple-cursors'
+"usable by Ctrl+N
+
+" ======================== Emmet =====================
+Plug 'mattn/emmet-vim'
+" CTRL+Y, <leader>
+
+"================== Vim Eunich =======================
+Plug 'tpope/vim-eunuch'
+" 'https://github.com/tpope/vim-eunuch' - README.md to learn how to use
+
+"============= Get highlight group chain =============
+Plug 'kergoth/vim-hilinks'
+
+"======================== Rust Lang ==================
+
+Plug 'rust-lang/rust.vim'
+Plug 'racer-rust/vim-racer'
 
 "=====================================================
 Plug 'joequery/stupid-easymotion'
@@ -199,11 +248,35 @@ call plug#end()
 colorscheme solarized
 set noeb vb t_vb=
 
+"============================== Racer ===============
+au FileType rust nmap gd <Plug>(rust-def)
+au FileType rust nmap gs <Plug>(rust-def-split)
+au FileType rust nmap gx <Plug>(rust-def-vertical)
+au FileType rust nmap <leader>gd <Plug>(rust-doc)
+
 "============================== Rails.vim ===========
 
 let g:rubycomplete_buffer_loading = 1
 let g:rubycomplete_rails = 1
 
+"============================== Rust.vim ==========="
+let g:rustfmt_autosave = 1
+
 "============================== Supertab ===========
 
 let g:SuperTabDefaultCompletionType = ""
+
+"======== Racer for Rust programming language =======
+
+let g:racer_cmd = "/Users/konstantingavrilov/.cargo/bin/racer"
+
+"======================= Lightline ==================
+let g:lightline = {
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'fugitive#head'
+      \ },
+      \ }
